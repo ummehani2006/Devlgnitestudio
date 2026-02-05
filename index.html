@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevIgniteStudioDesign | Creative Digital Studio</title>
+    <meta name="description" content="DevIgniteStudioDesign is a forward-thinking creative agency specializing in brand identity, web design, and digital experiences.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --primary-black: #0a0a0a;
+            --deep-charcoal: #111111;
+            --accent-gray: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent-glow: rgba(255, 255, 255, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary-black);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            cursor: none;
+        }
+        
+        .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        /* Custom Cursor */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        
+        .cursor-dot {
+            width: 5px;
+            height: 5px;
+            background-color: white;
+        }
+        
+        .cursor-outline {
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        
+        .cursor-outline.hover {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: transparent;
+        }
+        
+        /* Grain Overlay */
+        .grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        .nav-glass {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .reveal-text {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+        }
+        
+        .magnetic-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .magnetic-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .magnetic-btn:hover::before {
+            transform: translateY(0);
+        }
+        
+        .magnetic-btn span {
+            position: relative;
+            z-index: 1;
+            transition: color 0.4s;
+        }
+        
+        .magnetic-btn:hover span {
+            color: black;
+        }
+        
+        .project-card {
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .project-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .project-card .project-image {
+            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .project-card:hover .project-image {
+            transform: scale(1.05);
+        }
+        
+        .project-overlay {
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .project-card:hover .project-overlay {
+            opacity: 1;
+        }
+        
+        .service-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+        }
+        
+        .service-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+            padding-left: 20px;
+        }
+        
+        .service-item:hover .service-arrow {
+            transform: translateX(10px);
+        }
+        
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+        }
+        
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: white;
+            z-index: 10000;
+            transform-origin: left;
+            transform: scaleX(0);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #ffffff 0%, #888888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+        
+        .line-draw {
+            width: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            transition: width 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .line-draw.active {
+            width: 100%;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--primary-black);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 3rem !important;
+                line-height: 1.1 !important;
+            }
+            body {
+                cursor: auto;
+            }
+            .cursor-dot, .cursor-outline {
+                display: none !important;
+            }
+        }
+        
+        /* Image Hover Zoom */
+        .img-zoom {
+            overflow: hidden;
+        }
+        .img-zoom img {
+            transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .img-zoom:hover img {
+            transform: scale(1.1);
+        }
+        
+        /* External Link Indicator */
+        .external-link::after {
+            content: '↗';
+            display: inline-block;
+            margin-left: 5px;
+            font-size: 0.8em;
+            transition: transform 0.2s;
+        }
+        .external-link:hover::after {
+            transform: translate(2px, -2px);
+        }
+        
+        /* Loading Animation */
+        .page-loader {
+            position: fixed;
+            inset: 0;
+            background: #0a0a0a;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .loader-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-white selection:text-black">
+
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-text">DevIgnite<span class="italic">Studio</span></div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot hidden md:block"></div>
+    <div class="cursor-outline hidden md:block"></div>
+    
+    <!-- Grain Overlay -->
+    <div class="grain"></div>
+    
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 nav-glass transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="#home" class="text-xl font-bold tracking-tighter magnetic-target">
+                    DevIgnite<span class="font-display italic font-normal">Studio</span>
+                </a>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-sm text-gray-400 hover:text-white transition-colors magnetic-target">Home</a>
+                    <a href="#about" class="text-sm text-gray-400 hover:text-white transition-colors magnetic-target">About</a>
+                    <a href="#services" class="text-sm text-gray-400 hover:text-white transition-colors magnetic-target">Services</a>
+                    <a href="#projects" class="text-sm text-gray-400 hover:text-white transition-colors magnetic-target">Projects</a>
+                    <a href="#contact" class="magnetic-btn px-6 py-2 border border-white/20 rounded-full text-sm magnetic-target">
+                        <span>Contact</span>
+                    </a>
+                </div>
+                
+                <button class="md:hidden magnetic-target" id="menuBtn" aria-label="Toggle menu">
+                    <div class="w-6 h-0.5 bg-white mb-1.5 transition-all"></div>
+                    <div class="w-6 h-0.5 bg-white transition-all"></div>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu fixed inset-0 bg-black z-40 flex items-center justify-center md:hidden">
+        <div class="flex flex-col items-center space-y-8">
+            <a href="#home" class="text-3xl font-display mobile-link">Home</a>
+            <a href="#about" class="text-3xl font-display mobile-link">About</a>
+            <a href="#services" class="text-3xl font-display mobile-link">Services</a>
+            <a href="#projects" class="text-3xl font-display mobile-link">Projects</a>
+            <a href="#contact" class="text-3xl font-display mobile-link">Contact</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" 
+                 alt="Abstract dark geometric background" 
+                 class="w-full h-full object-cover opacity-40">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black"></div>
+        </div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-6 text-center">
+            <div class="mb-6 overflow-hidden">
+                <p class="text-sm tracking-[0.3em] text-gray-400 uppercase reveal-text" id="heroSubtitle">
+                    Creative Digital Studio
+                </p>
+            </div>
+            
+            <h1 class="hero-title font-display text-6xl md:text-8xl lg:text-9xl font-bold leading-tight mb-8" id="heroTitle">
+                <span class="block overflow-hidden">
+                    <span class="inline-block transform translate-y-full">We Craft</span>
+                </span>
+                <span class="block overflow-hidden">
+                    <span class="inline-block transform translate-y-full gradient-text">Digital</span>
+                </span>
+                <span class="block overflow-hidden">
+                    <span class="inline-block transform translate-y-full">Excellence</span>
+                </span>
+            </h1>
+            
+            <div class="max-w-2xl mx-auto mb-12 opacity-0 transform translate-y-10" id="heroText">
+                <p class="text-lg text-gray-300 leading-relaxed">
+                    DevIgniteStudioDesign is a forward-thinking creative agency specializing in brand identity, 
+                    web design, and digital experiences that captivate and convert.
+                </p>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center opacity-0 transform translate-y-10" id="heroCta">
+                <a href="#projects" class="magnetic-btn px-8 py-4 bg-white text-black rounded-full font-medium magnetic-target">
+                    <span>View Our Work</span>
+                </a>
+                <a href="https://www.awwwards.com/websites/design-agencies/" target="_blank" rel="noopener noreferrer" 
+                   class="magnetic-btn px-8 py-4 border border-white/20 rounded-full font-medium magnetic-target group external-link">
+                    <span class="flex items-center gap-2">
+                        Explore Agencies
+                    </span>
+                </a>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Marquee Section -->
+    <div class="py-8 border-y border-white/10 bg-white/5">
+        <div class="marquee-container">
+            <div class="marquee-content text-4xl md:text-6xl font-display text-white/10">
+                Brand Strategy • Web Design • UI/UX Design • Development • Motion Design • Brand Identity • Digital Marketing • Creative Direction • Brand Strategy • Web Design • UI/UX Design • Development • Motion Design • Brand Identity • Digital Marketing • Creative Direction •
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="py-32 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div class="space-y-8">
+                    <div class="line-draw mb-8"></div>
+                    <h2 class="text-5xl md:text-7xl font-display font-bold leading-tight reveal-text">
+                        Igniting Brands Through Design & Technology
+                    </h2>
+                    
+                    <!-- Team Image -->
+                    <div class="img-zoom rounded-lg overflow-hidden mt-8 shadow-2xl">
+                        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2670&auto=format&fit=crop" 
+                             alt="Creative team workspace" 
+                             class="w-full h-80 object-cover">
+                    </div>
+                </div>
+                
+                <div class="space-y-6 text-gray-400 text-lg leading-relaxed">
+                 
+                    <p class="reveal-text">
+                       DevIgniteStudioDesign is a creative digital studio founded in December 2025, built with a vision to design and develop digital experiences that feel modern, meaningful, and impactful.
+
+We specialize in crafting visually striking websites and digital solutions that blend aesthetics, functionality, and performance. Every project we take on is approached with a deep understanding of brand identity, user experience, and clean design principles.
+
+At DevIgniteStudioDesign, we believe great design is not just about how it looks — it’s about how it works. From concept to launch, we focus on delivering solutions that are intuitive, responsive, and aligned with our clients’ goals.
+
+As a growing studio, we are driven by creativity, attention to detail, and a passion for building digital products that stand out in today’s competitive landscape. We collaborate closely with our clients to turn ideas into powerful digital realities.
+
+Founded in December 2025, DevIgniteStudioDesign is where creativity meets clarity — and ideas ignite into digital form
+                    </p>
+                    
+                    <div class="grid grid-cols-3 gap-8 pt-8">
+                        <div class="reveal-text">
+                            <div class="text-4xl font-display font-bold text-white mb-2">50+</div>
+                            <div class="text-sm text-gray-500">Projects Delivered</div>
+                        </div>
+                        <div class="reveal-text">
+                            <div class="text-4xl font-display font-bold text-white mb-2">30+</div>
+                            <div class="text-sm text-gray-500">Happy Clients</div>
+                        </div>
+                        <div class="reveal-text">
+                            <div class="text-4xl font-display font-bold text-white mb-2">12</div>
+                            <div class="text-sm text-gray-500">Awards Won</div>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-8">
+                        <a href="https://www.awwwards.com/websites/design-agencies/" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center gap-2 text-white border-b border-white/30 pb-1 hover:border-white transition-colors external-link magnetic-target">
+                            View Inspiration on Awwwards
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-32 bg-[#0f0f0f]">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="mb-20">
+                <p class="text-sm tracking-[0.3em] text-gray-500 uppercase mb-4">What We Do</p>
+                <h2 class="text-5xl md:text-6xl font-display font-bold">Our Services</h2>
+            </div>
+            
+            <div class="space-y-0">
+                <!-- Service 1: Brand Identity -->
+                <div class="service-item py-12 group cursor-pointer magnetic-target">
+                    <a href="https://locomotive.ca/en" target="_blank" rel="noopener noreferrer" class="block external-link">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-8">
+                                <span class="text-gray-600 text-sm font-mono">01</span>
+                                <h3 class="text-3xl md:text-5xl font-display font-medium group-hover:text-white transition-colors">Brand Identity</h3>
+                            </div>
+                            <div class="service-arrow transition-transform duration-300">
+                                <svg class="w-8 h-8 text-gray-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="mt-4 ml-16 max-w-xl overflow-hidden h-0 group-hover:h-24 transition-all duration-500">
+                            <p class="text-gray-500">Strategic brand development including logo design, visual identity systems, brand guidelines, and comprehensive brand strategy. See how <span class="text-white font-medium">Locomotive</span> approaches branding.</p>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Service 2: Web Design -->
+                <div class="service-item py-12 group cursor-pointer magnetic-target">
+                    <a href="https://immersive-g.com/" target="_blank" rel="noopener noreferrer" class="block external-link">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-8">
+                                <span class="text-gray-600 text-sm font-mono">02</span>
+                                <h3 class="text-3xl md:text-5xl font-display font-medium group-hover:text-white transition-colors">Web Design</h3>
+                            </div>
+                            <div class="service-arrow transition-transform duration-300">
+                                <svg class="w-8 h-8 text-gray-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="mt-4 ml-16 max-w-xl overflow-hidden h-0 group-hover:h-24 transition-all duration-500">
+                            <p class="text-gray-500">Custom website design focused on user experience, conversion optimization, and stunning visual aesthetics. Explore <span class="text-white font-medium">Immersive Garden's</span> award-winning work.</p>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Service 3: Development -->
+                <div class="service-item py-12 group cursor-pointer magnetic-target">
+                    <a href="https://www.14islands.com/" target="_blank" rel="noopener noreferrer" class="block external-link">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-8">
+                                <span class="text-gray-600 text-sm font-mono">03</span>
+                                <h3 class="text-3xl md:text-5xl font-display font-medium group-hover:text-white transition-colors">Development</h3>
+                            </div>
+                            <div class="service-arrow transition-transform duration-300">
+                                <svg class="w-8 h-8 text-gray-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="mt-4 ml-16 max-w-xl overflow-hidden h-0 group-hover:h-24 transition-all duration-500">
+                            <p class="text-gray-500">Full-stack development using modern technologies. From React and Next.js to custom CMS solutions. Check out <span class="text-white font-medium">14islands</span> technical expertise.</p>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Service 4: UI/UX Design -->
+                <div class="service-item py-12 group cursor-pointer magnetic-target">
+                    <a href="https://zajno.com/" target="_blank" rel="noopener noreferrer" class="block external-link">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-8">
+                                <span class="text-gray-600 text-sm font-mono">04</span>
+                                <h3 class="text-3xl md:text-5xl font-display font-medium group-hover:text-white transition-colors">UI/UX Design</h3>
+                            </div>
+                            <div class="service-arrow transition-transform duration-300">
+                                <svg class="w-8 h-8 text-gray-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="mt-4 ml-16 max-w-xl overflow-hidden h-0 group-hover:h-24 transition-all duration-500">
+                            <p class="text-gray-500">User-centered design approach creating intuitive interfaces through research, prototyping, and testing. See <span class="text-white font-medium">Zajno's</span> experimental approach.</p>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Service 5: Motion Design -->
+                <div class="service-item py-12 group cursor-pointer magnetic-target border-b border-white/10">
+                    <a href="https://activetheory.net/" target="_blank" rel="noopener noreferrer" class="block external-link">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-8">
+                                <span class="text-gray-600 text-sm font-mono">05</span>
+                                <h3 class="text-3xl md:text-5xl font-display font-medium group-hover:text-white transition-colors">Motion Design</h3>
+                            </div>
+                            <div class="service-arrow transition-transform duration-300">
+                                <svg class="w-8 h-8 text-gray-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="mt-4 ml-16 max-w-xl overflow-hidden h-0 group-hover:h-24 transition-all duration-500">
+                            <p class="text-gray-500">Bringing brands to life through animation, micro-interactions, and cinematic video production. Discover <span class="text-white font-medium">Active Theory's</span> WebGL experiences.</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-32">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-20">
+                <div>
+                    <p class="text-sm tracking-[0.3em] text-gray-500 uppercase mb-4">Selected Work</p>
+                    <h2 class="text-5xl md:text-6xl font-display font-bold">Featured Projects</h2>
+                </div>
+                <a href="https://www.beatthebomb.com/locations/" target="_blank" rel="noopener noreferrer"
+                   class="mt-6 md:mt-0 text-gray-400 hover:text-white transition-colors flex items-center gap-2 magnetic-target external-link">
+                    
+                </a>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Project 1: Nebula Finance -->
+                <div class="project-card group cursor-pointer magnetic-target">
+                    <a href="https://mychauffeurdrive.com/" target="_blank" rel="noopener noreferrer" class="block external-link">
+                        <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-6 bg-gray-900 img-zoom shadow-2xl">
+                            <img src="hh.png" 
+                                 alt="Nebula Finance - Fintech App Design" 
+                                 class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                            <div class="project-overlay absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm">
+                                <div class="px-6 py-3 bg-white text-black rounded-full text-sm font-medium flex items-center gap-2">
+                                    View Live Project
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-2xl font-display font-bold mb-2 group-hover:text-gray-300 transition-colors">Chauffeur drive service</h3>
+                                <p class="text-gray-500 mb-3">MyChauffeurDrive is an international premium-class service offering comprehensive solutions for your transportation needs.</p>
+                                <div class="flex gap-2">
+                                    <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-400">Branding</span>
+                                    <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-400">Web Design</span>
+                                    <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-400">UI/UX</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Project 2: Apex Athletics -->
+                <div class="project-card group cursor-pointer magnetic-target md:mt-20">
+                    <a href="https://www.beatthebomb.com/locations/" target="_blank" rel="noopener noreferrer" class="block external-link">
+                        <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-6 bg-gray-900 img-zoom shadow-2xl">
+                            <img src="ggg.png" 
+                                 alt="Apex Athletics - Sportswear Website" 
+                                 class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                            <div class="project-overlay absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm">
+                                <div class="px-6 py-3 bg-white text-black rounded-full text-sm font-medium flex items-center gap-2">
+                                    View Live Project
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-2xl font-display font-bold mb-2 group-hover:text-gray-300 transition-colors"> Beat The Bomb</h3>
+                                <p class="text-gray-500 mb-3">Finally a place that has it all—a crazy interactive experience that everyone loves, amazing food and drinks packages, and space big enough for huge groups.</p>
+                                <div class="flex gap-2">
+                                    <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-400">E-commerce</span>
+                                    <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-400">Branding</span>
+                                    <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-400">Development</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Project 3: Lunar Architecture -->
+                <div class="project-card group cursor-pointer magnetic-target">
+                    <a href="https://www.thepighotel.com/in-the-cotswolds/" target="_blank" rel="noopener noreferrer" class="block external-link">
+                        <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-6 bg-gray-900 img-zoom shadow-2xl">
+                            <img src="hotel.png" 
+                                 alt="Lunar Architecture - Portfolio Website" 
+                                 class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                            <div class="project-overlay absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm">
+                                <div class="px-6 py-3 bg-white text-black rounded-full text-sm font-medium flex items-center gap-2">
+                                    View Live Project
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-2xl font-display font-bold mb-2 group-hover:text-gray-300 transition-colors">THEPIG HOTEL</h3>
+                                <p class="text-gray-500 mb-3">Our honey-hued hotel in the heart of the countryside.</p>
+                                <div class="flex gap-2">
+                                    <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-400">Web Design</span>
+                                    <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-400">Motion</span>
+                                    <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-400">CMS</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Project 4: Vault Security -->
+                <div class="project-card group cursor-pointer magnetic-target md:mt-20">
+                    <a href="https://delassus.com/en" target="_blank" rel="noopener noreferrer" class="block external-link">
+                        <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-6 bg-gray-900 img-zoom shadow-2xl">
+                            <img src="3d.png" 
+                                 alt="Vault Security - Cybersecurity Dashboard" 
+                                 class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                            <div class="project-overlay absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm">
+                                <div class="px-6 py-3 bg-white text-black rounded-full text-sm font-medium flex items-center gap-2">
+                                    View Live Project
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-2xl font-display font-bold mb-2 group-hover:text-gray-300 transition-colors">Sneacking</h3>
+                                <p class="text-gray-500 mb-3">Sneacking platform UI/UX design focusing on data visualization and threat monitoring dashboards.</p>
+                                <div class="flex gap-2">
+                                    <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-400">UI/UX</span>
+                                    <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-400">Design</span>
+                                    <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-400"> 3D Design</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- View More Button -->
+            <div class="mt-20 text-center">
+                <a href="https://ashfordcastle.com/" target="_blank" rel="noopener noreferrer"
+                   class="magnetic-btn px-10 py-5 border border-white/20 rounded-full text-lg magnetic-target external-link inline-flex items-center gap-3 hover:bg-white hover:text-black transition-all duration-300">
+                    <span>Explore More on Awwwards</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inspiration Banner -->
+    <section class="py-20 bg-white/5 border-y border-white/10">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-sm tracking-[0.3em] text-gray-500 uppercase mb-6">Our Inspiration</p>
+            <h3 class="text-3xl md:text-4xl font-display font-bold mb-8">Inspired by the Best in Digital Design</h3>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="https://locomotive.ca/" target="_blank" rel="noopener noreferrer" 
+                   class="px-6 py-3 bg-white/5 rounded-full hover:bg-white hover:text-black transition-all external-link magnetic-target">Locomotive</a>
+                <a href="https://immersive-g.com/" target="_blank" rel="noopener noreferrer"
+                   class="px-6 py-3 bg-white/5 rounded-full hover:bg-white hover:text-black transition-all external-link magnetic-target">Immersive Garden</a>
+                <a href="https://www.14islands.com/" target="_blank" rel="noopener noreferrer"
+                   class="px-6 py-3 bg-white/5 rounded-full hover:bg-white hover:text-black transition-all external-link magnetic-target">14islands</a>
+                <a href="https://zajno.com/" target="_blank" rel="noopener noreferrer"
+                   class="px-6 py-3 bg-white/5 rounded-full hover:bg-white hover:text-black transition-all external-link magnetic-target">Zajno</a>
+                <a href="https://activetheory.net/" target="_blank" rel="noopener noreferrer"
+                   class="px-6 py-3 bg-white/5 rounded-full hover:bg-white hover:text-black transition-all external-link magnetic-target">Active Theory</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-32 bg-[#0f0f0f] relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-white/5 to-transparent pointer-events-none"></div>
+        
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="grid md:grid-cols-2 gap-16">
+                <div>
+                    <p class="text-sm tracking-[0.3em] text-gray-500 uppercase mb-4">Get in Touch</p>
+                    <h2 class="text-5xl md:text-7xl font-display font-bold mb-8">Let's Create Something Amazing Together</h2>
+                    <p class="text-gray-400 text-lg mb-12 max-w-md">
+                        Ready to elevate your brand? We'd love to hear about your project. 
+                        Drop us a line and let's start the conversation.
+                    </p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 mb-1">Email</div>
+                                <a href="mailto:devignitestudiodesign@gmail.com" class="text-lg hover:text-gray-300 transition-colors magnetic-target">hello@devignitestudio.com</a>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 mb-1">Location</div>
+                                <div class="text-lg">Karachi, Pakistan</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4 mt-12">
+                      
+                        <a href="https://github.com/ummehani2006" target="_blank" rel="noopener noreferrer"
+                           class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-all magnetic-target external-link" aria-label="GitHub">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        </a>
+                
+                        <a href="https://www.instagram.com/devlgnitestudio_design/" target="_blank" rel="noopener noreferrer"
+                           class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-all magnetic-target external-link" aria-label="Instagram">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="bg-white/5 p-8 md:p-12 rounded-2xl border border-white/10">
+                    <form id="contactForm" class="space-y-6" onsubmit="handleSubmit(event)">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm text-gray-500 mb-2">Name</label>
+                                <input type="text" required class="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-white transition-colors magnetic-target" placeholder="John Doe">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-500 mb-2">Email</label>
+                                <input type="email" required class="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-white transition-colors magnetic-target" placeholder="john@example.com">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-2">Project Type</label>
+                            <select class="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-white transition-colors magnetic-target">
+                                <option value="" class="bg-black">Select a service</option>
+                                <option value="branding" class="bg-black">Brand Identity</option>
+                                <option value="webdesign" class="bg-black">Web Design</option>
+                                <option value="development" class="bg-black">Development</option>
+                                <option value="uiux" class="bg-black">UI/UX Design</option>
+                                <option value="motion" class="bg-black">Motion Design</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-2">Message</label>
+                            <textarea rows="4" required class="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-white transition-colors resize-none magnetic-target" placeholder="Tell us about your project..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="magnetic-btn w-full py-4 bg-white text-black rounded-full font-medium mt-8 magnetic-target hover:shadow-lg hover:shadow-white/20 transition-shadow">
+                            <span>Send Message</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="text-2xl font-bold tracking-tighter">
+                    DevIgnite<span class="font-display italic font-normal">Studio</span>
+                </div>
+                
+                <div class="flex gap-8 text-sm text-gray-500">
+                    <a href="#home" class="hover:text-white transition-colors magnetic-target">Home</a>
+                    <a href="#about" class="hover:text-white transition-colors magnetic-target">About</a>
+                    <a href="#services" class="hover:text-white transition-colors magnetic-target">Services</a>
+                    <a href="#projects" class="hover:text-white transition-colors magnetic-target">Projects</a>
+                </div>
+                
+                <div class="text-sm text-gray-600">
+                    © 2026 DevIgniteStudioDesign. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Page Loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('pageLoader').classList.add('hidden');
+            }, 500);
+        });
+
+        // Initialize GSAP
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // Custom Cursor
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        const magneticTargets = document.querySelectorAll('.magnetic-target');
+        
+        let mouseX = 0, mouseY = 0;
+        let outlineX = 0, outlineY = 0;
+        
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            if (cursorDot) {
+                cursorDot.style.left = mouseX + 'px';
+                cursorDot.style.top = mouseY + 'px';
+            }
+        });
+        
+        function animateCursor() {
+            if (cursorOutline) {
+                outlineX += (mouseX - outlineX) * 0.15;
+                outlineY += (mouseY - outlineY) * 0.15;
+                
+                cursorOutline.style.left = outlineX + 'px';
+                cursorOutline.style.top = outlineY + 'px';
+            }
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+        
+        // Magnetic Effect
+        magneticTargets.forEach(target => {
+            target.addEventListener('mouseenter', () => {
+                if (cursorOutline) cursorOutline.classList.add('hover');
+            });
+            
+            target.addEventListener('mouseleave', () => {
+                if (cursorOutline) cursorOutline.classList.remove('hover');
+                gsap.to(target, { x: 0, y: 0, duration: 0.3 });
+            });
+            
+            target.addEventListener('mousemove', (e) => {
+                const rect = target.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                gsap.to(target, {
+                    x: x * 0.3,
+                    y: y * 0.3,
+                    duration: 0.3
+                });
+            });
+        });
+        
+        // Scroll Progress
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = scrollTop / docHeight;
+            document.getElementById('scrollProgress').style.transform = `scaleX(${scrollPercent})`;
+        });
+        
+        // Hero Animations
+        window.addEventListener('load', () => {
+            const tl = gsap.timeline({ delay: 0.5 });
+            
+            tl.to('#heroTitle span span', {
+                y: 0,
+                duration: 1.2,
+                stagger: 0.1,
+                ease: "power4.out"
+            })
+            .to('#heroSubtitle', {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: "power3.out"
+            }, "-=0.8")
+            .to('#heroText', {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: "power3.out"
+            }, "-=0.6")
+            .to('#heroCta', {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: "power3.out"
+            }, "-=0.6");
+        });
+        
+        // Scroll Reveal Animations
+        const revealElements = document.querySelectorAll('.reveal-text');
+        revealElements.forEach((element) => {
+            gsap.fromTo(element, 
+                { opacity: 0.3, y: 30 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: element,
+                        start: "top 85%",
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+        });
+        
+        // Line Draw Animation
+        const lines = document.querySelectorAll('.line-draw');
+        lines.forEach(line => {
+            ScrollTrigger.create({
+                trigger: line,
+                start: "top 80%",
+                onEnter: () => line.classList.add('active')
+            });
+        });
+        
+        // Navigation Background
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            if (currentScroll > 100) {
+                navbar.classList.add('nav-glass');
+            } else {
+                navbar.classList.remove('nav-glass');
+            }
+        });
+        
+        // Mobile Menu
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+        let menuOpen = false;
+        
+        menuBtn.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            mobileMenu.classList.toggle('active');
+            
+            if (menuOpen) {
+                menuBtn.children[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                menuBtn.children[1].style.transform = 'rotate(-45deg)';
+            } else {
+                menuBtn.children[0].style.transform = 'none';
+                menuBtn.children[1].style.transform = 'none';
+            }
+        });
+        
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menuOpen = false;
+                mobileMenu.classList.remove('active');
+                menuBtn.children[0].style.transform = 'none';
+                menuBtn.children[1].style.transform = 'none';
+            });
+        });
+        
+        // Form Handling
+        function handleSubmit(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<span>Message Sent!</span>';
+            btn.style.background = '#22c55e';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = 'white';
+                e.target.reset();
+            }, 3000);
+        }
+        
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Parallax Effect for Project Cards
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                
+                const image = card.querySelector('img');
+                if (image) {
+                    image.style.transform = `scale(1.1) translate(${x * 10}px, ${y * 10}px)`;
+                }
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                const image = card.querySelector('img');
+                if (image) {
+                    image.style.transform = 'scale(1)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
