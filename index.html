@@ -228,12 +228,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
         .page-loader.hidden {
             opacity: 0;
-            pointer-events: none;
+            visibility: hidden;
+            pointer-events: none !important;
+            display: none !important;
         }
 
         .loader-text {
@@ -533,18 +535,18 @@
             <h1 class="hero-title font-display text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-bold leading-tight mb-8"
                 id="heroTitle">
                 <span class="block overflow-hidden">
-                    <span class="inline-block transform translate-y-full">Build Smarter.</span>
+                    <span class="inline-block">Build Smarter.</span>
                 </span>
                 <span class="block overflow-hidden">
-                    <span class="inline-block transform translate-y-full gradient-text">Design Better.</span>
+                    <span class="inline-block gradient-text">Design Better.</span>
                 </span>
                 <span class="block overflow-hidden">
-                    <span class="inline-block transform translate-y-full">Grow Faster.</span>
+                    <span class="inline-block">Grow Faster.</span>
                 </span>
             </h1>
 
             <!-- Hero Intro Paragraph -->
-            <div class="max-w-3xl mx-auto mb-10 opacity-0 transform translate-y-10" id="heroText">
+            <div class="max-w-3xl mx-auto mb-10 transition-opacity duration-700" id="heroText">
                 <p class="text-base sm:text-lg text-[#A7A9BC] leading-relaxed">
                     From high-conversion eCommerce engines and enterprise CRMs to autonomous AI chatbots and bespoke
                     SaaS platforms,
@@ -554,7 +556,7 @@
             </div>
 
             <!-- CTAs -->
-            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center opacity-0 transform translate-y-10 mb-14"
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-14 transition-opacity duration-700"
                 id="heroCta">
                 <a href="#contact"
                     class="magnetic-btn px-8 py-4 bg-gradient-to-r from-violet-600 via-indigo-600 to-violet-700 text-white rounded-full font-semibold shadow-lg shadow-violet-900/40 hover:shadow-violet-600/60 magnetic-target border border-violet-400/30 transition-all">
@@ -585,7 +587,7 @@
                         class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-1000">
 
                     <!-- Layer 2: Live HTML5 Video Stream (Toggled by user) -->
-                    <video id="heroVideoLayer" autoplay muted loop playsinline
+                    <video id="heroVideoLayer" autoplay muted loop playsinline preload="metadata"
                         class="hidden w-full h-full object-cover object-center">
                         <source src="video1.mp4" type="video/mp4">
                     </video>
@@ -1112,7 +1114,7 @@
                         class="relative z-10 w-full h-full object-cover object-center transition-all duration-500 drop-shadow-2xl">
 
                     <!-- Live HTML5 Video Layer -->
-                    <video id="mainShowreelVideo" loop playsinline muted
+                    <video id="mainShowreelVideo" loop playsinline muted preload="metadata"
                         class="relative z-10 w-full h-full object-cover hidden">
                         <source src="aichatbot.mp4" type="video/mp4">
                         Your browser does not support HTML5 video.
@@ -2953,15 +2955,27 @@
 
     <!-- ==================== INTERACTIVE SCRIPTS ==================== -->
     <script>
-        // Page Loader Fade Out
-        window.addEventListener('load', () => {
+        // Fast & Resilient Page Loader Dismissal
+        function dismissLoader() {
             const loader = document.getElementById('pageLoader');
-            if (loader) {
+            if (loader && !loader.classList.contains('hidden')) {
+                loader.classList.add('hidden');
                 setTimeout(() => {
-                    loader.classList.add('hidden');
-                }, 400);
+                    loader.style.display = 'none';
+                }, 300);
             }
-        });
+        }
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            dismissLoader();
+        } else {
+            document.addEventListener('DOMContentLoaded', dismissLoader);
+            window.addEventListener('load', dismissLoader);
+        }
+        // Strict safety timeout: never block user past 400ms
+        setTimeout(dismissLoader, 400);
+        window.addEventListener('click', dismissLoader, { once: true });
+        window.addEventListener('touchstart', dismissLoader, { once: true });
+        window.addEventListener('scroll', dismissLoader, { once: true });
 
         // Custom Cursor Movement
         const cursorDot = document.getElementById('cursorDot');
@@ -3012,48 +3026,58 @@
             });
         }
 
-        // GSAP Scroll Animations
-        gsap.registerPlugin(ScrollTrigger);
+        // GSAP Scroll Animations (Safe check so script never throws if CDN is blocked)
+        if (typeof gsap !== 'undefined') {
+            try {
+                if (typeof ScrollTrigger !== 'undefined') {
+                    gsap.registerPlugin(ScrollTrigger);
+                }
 
-        // Hero Stagger Reveals
-        gsap.to('#heroTitle span span', {
-            y: 0,
-            duration: 1.1,
-            stagger: 0.15,
-            ease: "power4.out",
-            delay: 0.2
-        });
+                // Hero Stagger Reveals
+                gsap.from('#heroTitle span span', {
+                    y: '100%',
+                    duration: 1.1,
+                    stagger: 0.15,
+                    ease: "power4.out",
+                    delay: 0.1
+                });
 
-        gsap.to('#heroText', {
-            opacity: 1,
-            y: 0,
-            duration: 0.9,
-            ease: "power3.out",
-            delay: 0.7
-        });
+                gsap.from('#heroText', {
+                    opacity: 0,
+                    y: 20,
+                    duration: 0.8,
+                    ease: "power3.out",
+                    delay: 0.4
+                });
 
-        gsap.to('#heroCta', {
-            opacity: 1,
-            y: 0,
-            duration: 0.9,
-            ease: "power3.out",
-            delay: 0.9
-        });
+                gsap.from('#heroCta', {
+                    opacity: 0,
+                    y: 20,
+                    duration: 0.8,
+                    ease: "power3.out",
+                    delay: 0.6
+                });
 
-        // Section ScrollTriggers
-        document.querySelectorAll('.reveal-text').forEach((element) => {
-            gsap.from(element, {
-                scrollTrigger: {
-                    trigger: element,
-                    start: "top 85%",
-                    toggleActions: "play none none none"
-                },
-                y: 30,
-                opacity: 0,
-                duration: 0.8,
-                ease: "power3.out"
-            });
-        });
+                // Section ScrollTriggers
+                if (typeof ScrollTrigger !== 'undefined') {
+                    document.querySelectorAll('.reveal-text').forEach((element) => {
+                        gsap.from(element, {
+                            scrollTrigger: {
+                                trigger: element,
+                                start: "top 85%",
+                                toggleActions: "play none none none"
+                            },
+                            y: 30,
+                            opacity: 0,
+                            duration: 0.8,
+                            ease: "power3.out"
+                        });
+                    });
+                }
+            } catch (e) {
+                console.warn('GSAP animation skipped:', e);
+            }
+        }
 
         // Hero Hologram vs. Live Video Toggle
         const toggleHologramBtn = document.getElementById('toggleHologramBtn');
