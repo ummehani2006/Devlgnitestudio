@@ -556,22 +556,22 @@
             </div>
 
             <!-- CTAs -->
-            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-14 transition-opacity duration-700"
+            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-14 w-full max-w-xl mx-auto"
                 id="heroCta">
-                <a href="#contact"
-                    class="magnetic-btn px-8 py-4 bg-gradient-to-r from-violet-600 via-indigo-600 to-violet-700 text-white rounded-full font-semibold shadow-lg shadow-violet-900/40 hover:shadow-violet-600/60 magnetic-target border border-violet-400/30 transition-all">
+                <a href="https://www.linkedin.com/company/devlgnitestudio/?viewAsMember=true" target="_blank" rel="noopener noreferrer"
+                    class="magnetic-btn w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-cyan-400 via-violet-600 to-indigo-600 hover:from-cyan-300 hover:to-indigo-500 text-white rounded-full font-bold shadow-xl shadow-violet-600/30 hover:shadow-cyan-500/40 magnetic-target border border-white/20 text-center transition-all">
                     <span>Start a Project</span>
                 </a>
                 <a href="#categories"
-                    class="magnetic-btn px-8 py-4 border border-violet-500/40 hover:border-cyan-400 rounded-full font-semibold text-[#F5F5FA] hover:text-white magnetic-target group transition-all">
-                    <span class="flex items-center gap-2">
+                    class="magnetic-btn w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 border border-violet-400/40 hover:border-cyan-400 rounded-full font-semibold text-[#F5F5FA] hover:text-white magnetic-target group text-center transition-all">
+                    <span class="flex items-center justify-center gap-2">
                         Explore 20+ Industry Tracks
                         <span class="text-cyan-400">→</span>
                     </span>
                 </a>
                 <a href="#showreel"
-                    class="magnetic-btn px-6 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full font-semibold text-xs text-cyan-300 magnetic-target flex items-center gap-2 transition-all">
-                    <span class="w-2 h-2 rounded-full bg-red-400 animate-ping"></span>
+                    class="magnetic-btn w-full sm:w-auto px-6 py-4 bg-white/5 hover:bg-white/15 border border-white/15 hover:border-cyan-400/50 rounded-full font-semibold text-xs text-cyan-300 magnetic-target flex items-center justify-center gap-2 transition-all">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
                     <span>Watch Showreel</span>
                 </a>
             </div>
@@ -1111,17 +1111,15 @@
                     <!-- Image Poster Layer for Active Track -->
                     <img id="showreelPosterImg" src="track-01-ai-chatbot.png"
                         alt="DevIgniteStudio Active Showcase Track"
-                        class="relative z-10 w-full h-full object-cover object-center transition-all duration-500 drop-shadow-2xl">
+                        class="absolute inset-0 z-10 w-full h-full object-cover object-center transition-opacity duration-300 drop-shadow-2xl">
 
                     <!-- Live HTML5 Video Layer -->
-                    <video id="mainShowreelVideo" loop playsinline muted preload="metadata"
-                        class="relative z-10 w-full h-full object-cover hidden">
-                        <source src="aichatbot.mp4" type="video/mp4">
-                        Your browser does not support HTML5 video.
+                    <video id="mainShowreelVideo" loop playsinline muted preload="metadata" src="aichatbot.mp4"
+                        class="absolute inset-0 z-10 w-full h-full object-cover hidden">
                     </video>
 
                     <!-- Scanline and HUD Overlays -->
-                    <div class="absolute inset-0 scanlines pointer-events-none z-15"></div>
+                    <div class="absolute inset-0 scanlines pointer-events-none z-10"></div>
 
                     <!-- Custom Floating HUD Header -->
                     <div
@@ -1141,7 +1139,7 @@
 
                     <!-- Centered Play/Pause Trigger Overlay -->
                     <button id="mainPlayOverlayBtn"
-                        class="absolute inset-0 z-20 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-all focus:outline-none"
+                        class="absolute inset-0 z-20 flex items-center justify-center bg-black/40 hover:bg-black/20 transition-all focus:outline-none"
                         aria-label="Play Video Stream">
                         <div
                             class="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-violet-600/90 hover:bg-violet-500 text-white flex items-center justify-center shadow-2xl shadow-violet-900 border border-violet-400/50 group-hover:scale-110 transition-transform">
@@ -1176,7 +1174,7 @@
                                     title="Toggle Play / Pause">
                                     <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400 flex-shrink-0"
                                         fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M8 5v14l11-7z" />
+                                        <path id="playBtnTogglePath" d="M8 5v14l11-7z" />
                                     </svg>
                                     <span id="playBtnLabel" class="hidden sm:inline whitespace-nowrap">Play Video</span>
                                 </button>
@@ -3124,22 +3122,51 @@
         const fullscreenBtnToggle = document.getElementById('fullscreenBtnToggle');
         const showreelHudBadge = document.getElementById('showreelHudBadge');
 
-        function toggleMainPlay() {
-            if (!mainVideo) return;
-            const poster = document.getElementById('showreelPosterImg');
-            if (mainVideo.paused) {
+        const playBtnTogglePath = document.getElementById('playBtnTogglePath');
+
+        function setVideoPlayingUI(isPlaying) {
+            if (isPlaying) {
+                if (mainPlayOverlayBtn) {
+                    mainPlayOverlayBtn.classList.add('opacity-0', 'pointer-events-none');
+                }
+                const poster = document.getElementById('showreelPosterImg');
                 if (poster) poster.classList.add('hidden');
-                mainVideo.classList.remove('hidden');
-                mainVideo.play().catch(() => { });
+                if (mainVideo) mainVideo.classList.remove('hidden');
                 if (playBtnLabel) playBtnLabel.textContent = 'Pause Video Stream';
-                if (playIcon) playIcon.classList.add('hidden');
-                if (pauseIcon) pauseIcon.classList.remove('hidden');
+                if (playBtnTogglePath) playBtnTogglePath.setAttribute('d', 'M6 19h4V5H6v14zm8-14v14h4V5h-4z');
             } else {
-                mainVideo.pause();
+                if (mainPlayOverlayBtn) {
+                    mainPlayOverlayBtn.classList.remove('opacity-0', 'pointer-events-none');
+                }
                 if (playBtnLabel) playBtnLabel.textContent = 'Play Video Stream';
+                if (playBtnTogglePath) playBtnTogglePath.setAttribute('d', 'M8 5v14l11-7z');
                 if (playIcon) playIcon.classList.remove('hidden');
                 if (pauseIcon) pauseIcon.classList.add('hidden');
             }
+        }
+
+        function toggleMainPlay() {
+            if (!mainVideo) return;
+            if (mainVideo.paused) {
+                const poster = document.getElementById('showreelPosterImg');
+                if (poster) poster.classList.add('hidden');
+                mainVideo.classList.remove('hidden');
+                const p = mainVideo.play();
+                if (p !== undefined) {
+                    p.catch(err => {
+                        console.warn('Playback blocked by browser policy:', err);
+                        setVideoPlayingUI(false);
+                    });
+                }
+            } else {
+                mainVideo.pause();
+            }
+        }
+
+        if (mainVideo) {
+            mainVideo.addEventListener('play', () => setVideoPlayingUI(true));
+            mainVideo.addEventListener('pause', () => setVideoPlayingUI(false));
+            mainVideo.addEventListener('ended', () => setVideoPlayingUI(false));
         }
 
         if (mainPlayOverlayBtn) mainPlayOverlayBtn.addEventListener('click', toggleMainPlay);
@@ -3154,7 +3181,7 @@
 
         if (mainVideo) {
             mainVideo.addEventListener('timeupdate', () => {
-                if (mainVideo.duration) {
+                if (mainVideo.duration && !isNaN(mainVideo.duration)) {
                     const percent = (mainVideo.currentTime / mainVideo.duration) * 100;
                     if (videoProgressBar) videoProgressBar.style.width = `${percent}%`;
 
@@ -3171,7 +3198,7 @@
             videoProgressBarWrapper.addEventListener('click', (e) => {
                 const rect = videoProgressBarWrapper.getBoundingClientRect();
                 const pos = (e.clientX - rect.left) / rect.width;
-                if (mainVideo.duration) {
+                if (mainVideo.duration && !isNaN(mainVideo.duration)) {
                     mainVideo.currentTime = pos * mainVideo.duration;
                 }
             });
@@ -3217,6 +3244,7 @@
                 if (img) {
                     if (showreelPosterImg) {
                         showreelPosterImg.src = img;
+                        showreelPosterImg.classList.remove('hidden');
                     }
                     if (showreelBgBlurred) {
                         showreelBgBlurred.src = img;
@@ -3228,21 +3256,17 @@
                 }
 
                 if (mainVideo && src) {
+                    mainVideo.pause();
                     mainVideo.src = src;
+                    mainVideo.currentTime = 0;
                     mainVideo.load();
                     mainVideo.classList.remove('hidden');
                     if (showreelPosterImg) showreelPosterImg.classList.add('hidden');
 
                     const playPromise = mainVideo.play();
                     if (playPromise !== undefined) {
-                        playPromise.then(() => {
-                            if (playIcon) playIcon.classList.add('hidden');
-                            if (pauseIcon) pauseIcon.classList.remove('hidden');
-                            if (playBtnLabel) playBtnLabel.textContent = 'Pause Video Stream';
-                        }).catch(() => {
-                            if (playIcon) playIcon.classList.remove('hidden');
-                            if (pauseIcon) pauseIcon.classList.add('hidden');
-                            if (playBtnLabel) playBtnLabel.textContent = 'Play Video Stream';
+                        playPromise.catch(() => {
+                            setVideoPlayingUI(false);
                         });
                     }
                 }
